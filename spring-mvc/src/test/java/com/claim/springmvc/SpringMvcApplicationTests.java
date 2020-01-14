@@ -1,10 +1,10 @@
-package com.example.codeengine.expense;
+package com.claim.springmvc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ExpenseApplicationTests {
+class SpringMvcApplicationTests {
 
 	@Test
 	void contextLoads() {
