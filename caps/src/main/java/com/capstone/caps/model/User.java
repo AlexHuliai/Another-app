@@ -2,6 +2,8 @@ package com.capstone.caps.model;
 
 import javax.persistence.*;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Table(name="newusers")
 public class User {
@@ -21,11 +23,33 @@ public class User {
 	private String password;
 	@Transient
 	private String pass2;
+	private String role;
+	@Transient
+	MultipartFile file;
+	private String image;
 	
 	
 	
 	
 	
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public MultipartFile getFile() {
+		return file;
+	}
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -68,6 +92,7 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", lname=" + lname + ", fname=" + fname + ", phone=" + phone + ", email=" + email

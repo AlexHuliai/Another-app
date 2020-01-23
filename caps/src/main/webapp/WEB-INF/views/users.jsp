@@ -6,6 +6,9 @@ pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.io.*,java.util.*" %>
 
+<c:if test="${empty loggedInUser}">
+<%response.sendRedirect("login");%>
+</c:if>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,14 +35,13 @@ pageEncoding="ISO-8859-1"%>
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png" />
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png" />
   <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png" />
-  <link rel="shortcut icon" href="ico/favicon.png" />
-
-  <!-- =======================================================
-    Theme Name: Flattern
-    Theme URL: https://bootstrapmade.com/flattern-multipurpose-bootstrap-template/
-    Author: BootstrapMade.com
-    Author URL: https://bootstrapmade.com
-  ======================================================= -->
+  <link rel="shortcut icon" href="static/ico/favicon.png" />
+  
+  <style type="text/css">
+        img {
+  border-radius: 50%;
+}
+  </style>
 </head>
 
 <body>
@@ -72,6 +74,12 @@ pageEncoding="ISO-8859-1"%>
           </div>
           <div class="span8">
             <ul class="breadcrumb">
+              <li class="nav-item text-left">
+    <form class="form-search" action="search" method="post">
+                  <input name="name" placeholder="Type something" type="text" class="input-medium search-query">
+                  <button type="submit" class="btn btn-square btn-theme">Search</button>
+                </form>
+  </li>
               <li><a href="#"><i class="icon-home"></i></a><i class="icon-angle-right"></i></li>
               <li><a href="index">Home</a><i class="icon-angle-right"></i></li>
               <li class="active">Users</li>
@@ -84,16 +92,26 @@ pageEncoding="ISO-8859-1"%>
       <div class="container">
         <!-- Default table -->
         <div class="row">
-          <div class="span10">
-            <h4>Default styles</h4>
+          <div class="span12">
+            <h4>User Lists
+            ${msg} ${sucess}${lego}
+            </h4>
             <table class="table table-striped">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Name</th>
+                  <th>Image</th>
+                  <th>
+                  <input type="text" id="searchnow" 
+             placeholder=" Filter Names (${users.size()}) " 
+             class="form-control"  >
+          </th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Action</th>                  
+                  <c:if test="${loggedInUser.role eq 'ADMIN'}">                 
+                  <th>Role</th>
+                  <th>Action</th>
+                  </c:if>                
                 </tr>
               </thead>
               <tbody>
@@ -101,9 +119,20 @@ pageEncoding="ISO-8859-1"%>
                 <tr>
                   <td>
                     ${users.indexOf(item)+1}.
-                  </td>                   
+                  </td>            
                   <td>
-                    ${item.fname} ${item.lname}
+                  <div class="text-center">
+                    <c:if test="${not empty item.image}">
+                    <img src="static/img/users/${item.id}/profile/${item.image}" 
+    alt="Profile Image" style="height:50px; width: auto;"><br>
+                    </c:if>
+                    <c:if test="${empty item.image}">
+                    No Image
+                    </c:if>
+                 </div>
+                  </td>
+                  <td>
+                  ${item.fname} ${item.lname}
                   </td>
                   <td>
                     ${item.email}
@@ -111,11 +140,23 @@ pageEncoding="ISO-8859-1"%>
                   <td>
                     ${item.phone}
                   </td>
+                  <c:if test="${loggedInUser.role eq 'ADMIN'}">
                   <td>
-                  <a href="update?id=${item.id}">edit</a>
-                  <a href="delete?id=${item.id}">Delete</a>
+                   <form method="POST" action="editrole" >	    
+<input type="hidden" name="id" value="${item.id}" />	     
+<select onchange="this.form.submit()" name="role" class="form-control">
+<option value="${item.role}">${item.role}</option>
+<option value="USER">USER </option>
+<option value="DBA">DBA</option>
+<option value="ADMIN">ADMIN</option>	 
+</select>	
+   </form>
+                   </td>
+                   <td>
+                  <a href="update?id=${item.id}" class="text-success"> <i class="icon-pencil"></i></a>
+                  <a href="delete?id=${item.id}" onclick="confirmed(); return false;" > <i class="icon-trash"></i></a>
                   </td>
-                  
+                  </c:if>
                 </tr>
                 </c:forEach>
                 
@@ -244,6 +285,32 @@ Semarang 16425 Indonesia
 
   <!-- Template Custom JavaScript File -->
   <script src="static/js/custom.js"></script>
+  
+    <script>
+    function confirmed(){
+            if (confirm('You are about to delete, Do you want to proceed?')) {
+                  document.getElementById("del").submit();
+                  return true;
+            } else {
+               return false;
+            }
+         }
+
+    
+    $("#searchnow").keyup(function () {
+        var value = this.value.toLowerCase().trim();
+
+        $("table tr").each(function (index) {
+            if (!index) return;
+            $(this).find("td").each(function () {
+                var id = $(this).text().toLowerCase().trim();
+                var not_found = (id.indexOf(value) == -1);
+                $(this).closest('tr').toggle(!not_found);
+                return not_found;
+            });
+        });
+    });
+    </script>
 
 </body>
 

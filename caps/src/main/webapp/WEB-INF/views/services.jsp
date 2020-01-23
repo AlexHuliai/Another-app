@@ -58,7 +58,8 @@
         <div class="row">
           <div class="span4">
             <div class="inner-heading">
-              <h2>Get in touch</h2>
+              <h2>Get in touch </h2>
+              <h2>${msg}</h2>
             </div>
           </div>
           <div class="span8">
@@ -78,7 +79,7 @@
           <div class="span12">
             <h4>Get in touch with us by filling <strong>contact form below</strong></h4>
 
-            <form action="" method="post" role="form" class="contactForm">
+            <form action="sendemail" method="post" role="form" class="contactForm">
               <div id="sendmessage">Your message has been sent. Thank you!</div>
               <div id="errormessage"></div>
 

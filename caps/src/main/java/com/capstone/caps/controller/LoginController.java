@@ -36,7 +36,7 @@ public class LoginController {
 	@GetMapping("register")
 	public String register(Model model) {
 		model.addAttribute("msg", "Register");
-		//model.addAttribute("action", "register");
+	model.addAttribute("hidden", "");
 	//	model.addAttribute("user", new User());
 		return "register";
 	}
@@ -46,11 +46,11 @@ public class LoginController {
 		model.addAttribute("users",userRepository.findByName(name));
 		
 		
-		return "index";
+		return "users";
 	}
 	
 	@PostMapping("register")
-	public String register(@ModelAttribute User user,Model model) {
+	public String register(@ModelAttribute User user,RedirectAttributes model) {
 		if(userRepository.findByEmail(user.getEmail())!=null) {
 			User user1 = userRepository.findByEmail(user.getEmail());
 			user1.setFname(user.getFname());
@@ -59,27 +59,29 @@ public class LoginController {
 			
 			user1.setPassword(user.getPassword());
 			userRepository.save(user1);
+			model.addFlashAttribute("succes",user1.getFname()+"was updated");
 		}
 		else {
+			user.setRole("USER");
 		userRepository.save(user);
 		}
 		model.addAttribute("success", "User "+user.getFname()+" saved");
 //		model.addAttribute("users", user);
 		//model.addAttribute("user", new User());
-	return "index";
+	return "redirect:/users";
 }
 	@GetMapping("delete")
 	public String deleteUser(@RequestParam long id,RedirectAttributes redirect) {
 		userRepository.deleteById(id);
 		redirect.addFlashAttribute("petro","Delete Success");
-		return "redirect:/index";
+		return "redirect:/users";
 	}
 	@GetMapping("update")
 	public String updateUser(@RequestParam long id,Model model) {
 		userRepository.findById(id);
 		model.addAttribute("petro", "Update");
 		model.addAttribute("user", userRepository.findById(id));
-		//model.addAttribute("action", "updateUser");
+model.addAttribute("hidden", "hidden");
 		return "register";
 	}
 	@GetMapping("login")
@@ -134,6 +136,25 @@ public class LoginController {
 	redirect.addFlashAttribute("msg", "You have been signed out");
 	return "redirect:/login";
 	}
+	
+	@PostMapping("editrole")
+	public String giverole(@RequestParam long id,String role,RedirectAttributes model) {
+	User user = userRepository.findById(id).get();
+	if(user!=null) {
+	user.setRole(role);
+	userRepository.save(user);
+	model.addFlashAttribute("lego",user.getFname()+" is assigned to "+ role);
+	}
+	
+	return "redirect:/users";
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }
